@@ -1,7 +1,8 @@
-import { ProductManagerMONGO as ProductManager } from "../dao/productManagerMONGO.js";
+// import { ProductManagerMONGO as ProductManager } from "../dao/productManagerMONGO.js";
+import { productsService } from "../services/productsService.js";
 import { isValidObjectId } from 'mongoose';
 
-const productManager = new ProductManager()
+//const productManager = new ProductManager()
 
 export class ProductsController{
     static getProducts=async(req,res)=>{
@@ -15,7 +16,9 @@ export class ProductsController{
         if (query.stock === "disponible") query.stock = { $gt: 0 };
        
         try{ 
-            const {docs,totalPages,prevPage,nextPage,page,hasPrevPage,hasNextPage}= await productManager.getProducts(query,{pagina, limit, sort});
+            // const {docs,totalPages,prevPage,nextPage,page,hasPrevPage,hasNextPage}= await productManager.getProducts(query,{pagina, limit, sort});
+
+            const {docs,totalPages,prevPage,nextPage,page,hasPrevPage,hasNextPage}= await productsService.getProducts(query,{pagina, limit, sort});
             return res.status(200).json({
                 status: 'success',
                 payload:docs,
@@ -46,7 +49,8 @@ export class ProductsController{
         }
     
         try{
-            const matchingProduct = await productManager.getProductByFilter({_id:id})
+            //const matchingProduct = await productManager.getProductByFilter({_id:id})
+            const matchingProduct = await productsService.getProductBy({_id:id})
             if(!matchingProduct){
                 return res.status(404).json({
                     error: `Product with ID#${id} was not found in our database. Please verify your ID# and try again`
@@ -86,7 +90,8 @@ export class ProductsController{
         }  
         
         try{
-            const duplicateCode = await productManager.getProductByFilter({code: code})
+            //const duplicateCode = await productManager.getProductByFilter({code: code})
+            const duplicateCode = await productsService.getProductBy({code: code})
             if(duplicateCode){
                 return res.status(400).json({
                     error:`Error: Product Code already exists and cannot be duplicated`,
@@ -101,7 +106,8 @@ export class ProductsController{
         }
     
         try{
-            const newProduct = await productManager.addProduct(prodToPost)
+            //const newProduct = await productManager.addProduct(prodToPost)
+            const newProduct = await productsService.postNewProduct(prodToPost)
             return res.status(200).json({
                 payload: newProduct
             })
@@ -123,7 +129,8 @@ export class ProductsController{
         }
     
         try{
-            const matchingProduct = await productManager.getProductByFilter({_id:id})
+            //const matchingProduct = await productManager.getProductByFilter({_id:id})
+            const matchingProduct = await productsService.getProductBy({_id:id})
             if(!matchingProduct){
                 return res.status(404).json({
                     error: `Failed to complete product update: the product you are trying to modify (product with ID#${id}) was not found in our database. Please verify your ID# and try again`,                
@@ -145,11 +152,12 @@ export class ProductsController{
     
         if(propsToUpdate.code){
             try {
-                const duplicateCode = await productManager.getProductByFilter({_id:{$ne:id}, code: propsToUpdate.code})
+                //const duplicateCode = await productManager.getProductByFilter({_id:{$ne:id}, code: propsToUpdate.code})
+                const duplicateCode = await productsService.getProductBy({_id:{$ne:id}, code: propsToUpdate.code})
                 if(duplicateCode){
                     return res.status(400).json({
                         error:`Error: product not updated`,
-                        message:`Failed to update product with id#${id} due to invalid argument: The "code" provided already exists in database and cannot be duplicated. Please verify and try again with a different code#`
+                        message:`Failed to update product with id#${id} due to invalid argument: The "code" property cannot be updated/changed to a previously existent code in our database. Please verify and try again with a different code#`
                     })
                 }
             } catch (error) {
@@ -162,7 +170,8 @@ export class ProductsController{
     
     
         try {
-            let updatedProduct = await productManager.updateProduct(id,propsToUpdate)
+            //let updatedProduct = await productManager.updateProduct(id,propsToUpdate)
+            let updatedProduct = await productsService.updateProduct(id,propsToUpdate)
             return res.status(200).json({payload:updatedProduct})
         } catch (error) {
             return res.status(500).json({
@@ -181,7 +190,8 @@ export class ProductsController{
         }
     
         try {
-            let deletedProduct = await productManager.deleteProduct(id)
+            //let deletedProduct = await productManager.deleteProduct(id)
+            let deletedProduct = await productsService.deleteProduct(id)
             if(!deletedProduct){
                 return res.status(404).json({
                     error: `Failed to delete product: the product you are trying to delete (ID#${id}) was not found in our database. Please verify your ID# and try again`,                
