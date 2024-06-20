@@ -1,4 +1,6 @@
 import { CartManagerMONGO as CartManager } from '../dao/cartManagerMONGO.js'
+import { productsService } from '../services/productsService.js';
+import { cartsService } from '../services/cartsService.js';
 import { ProductManagerMONGO as ProductManager } from '../dao/productManagerMONGO.js';
 import { isValidObjectId } from 'mongoose';
 
@@ -9,7 +11,8 @@ export class CartsController{
     static getCarts=async(req,res)=>{
         res.setHeader('Content-type', 'application/json');    
         try{
-            const carts = await cartManager.getCarts() 
+            //const carts = await cartManager.getCarts() 
+            const carts = await cartsService.getCarts() 
             if(!carts){
                 return res.status(404).json({
                     error: `ERROR: resource not found`,
@@ -34,7 +37,8 @@ export class CartsController{
         }
     
         try {
-            const matchingCart = await cartManager.getCartById(cid) 
+            //const matchingCart = await cartManager.getCartById(cid) 
+            const matchingCart = await cartsService.getCartById(cid) 
             if(!matchingCart){
                 return res.status(404).json({
                     error: `ERROR: Cart id# provided was not found`,
@@ -54,7 +58,8 @@ export class CartsController{
     static postNewCart=async(req,res)=>{
         res.setHeader('Content-type', 'application/json')
         try {
-            const newCart = await cartManager.createCart()
+            //const newCart = await cartManager.createCart()
+            const newCart = await cartsService.createNewCart()
             if(!newCart){
                 return res.status(404).json({
                     error: `ERROR: resource not found - new cart not posted`,
@@ -81,9 +86,9 @@ export class CartsController{
             return res.status(400).json({error:`The Cart ID# provided is not an accepted Id Format in MONGODB database. Please verify your Cart ID# and try again`})
         }
     
-    
         try{
-            const cartIsValid = await cartManager.getCartById(cid)
+            //const cartIsValid = await cartManager.getCartById(cid)
+            const cartIsValid = await cartsService.getCartById(cid)
             if(!cartIsValid){
                 return res.status(404).json({
                     error: `ERROR: Cart id# provided was not found`,
@@ -99,26 +104,26 @@ export class CartsController{
        
     
         //note:not sure if needed anymore due to regex validation(test more & decide)
-        if (typeof newCartDetails !== 'object'){
-            return res.status(400).json({
-                error: 'Invalid format in request body',
-                message: `Failed to replace the content in the cart id#${cid} due to invalid format request. Please make sure the products you submit are in a valid JSON format.`
-            });
-        }
+        // if (typeof newCartDetails !== 'object'){
+        //     return res.status(400).json({
+        //         error: 'Invalid format in request body',
+        //         message: `Failed to replace the content in the cart id#${cid} due to invalid format request. Please make sure the products you submit are in a valid JSON format.`
+        //     });
+        // }
         
         //note:not sure if needed due to regex validation(test more & decide)
-        if (Object.keys(newCartDetails).length === 0) {
-            return res.status(400).json({
-                error: 'Empty request body',
-                message: `Failed to replace the content in the cart id#${cid} due to incomplete request. Please submit the products you want to push to replace the cart content.`
-            });
-        }
+        // if (Object.keys(newCartDetails).length === 0) {
+        //     return res.status(400).json({
+        //         error: 'Empty request body',
+        //         message: `Failed to replace the content in the cart id#${cid} due to incomplete request. Please submit the products you want to push to replace the cart content.`
+        //     });
+        // }
         
         const newCartDetailsString = JSON.stringify(newCartDetails)
         const regexValidFormat = /^\[\{.*\}\]$/;
         if(!regexValidFormat.test(newCartDetailsString)){
             return res.status(400).json({
-                error: 'Invalid format in request body',
+                error: 'Invalid request : Format does not meet criteria',
                 message:  `Failed to replace the content in the cart id#${cid} due to invalid format request. Please make sure the products you submit are in a valid JSON format (Alike array with objects: [{...content}]).`
             });
         }
@@ -137,7 +142,8 @@ export class CartsController{
         const pidArray = newCartDetails.map(cart=>cart.pid)
         try{
             for(const pid of pidArray){
-                const pidIsValid = await productManager.getProductById(pid)
+                //const pidIsValid = await productManager.getProductById(pid)
+                const pidIsValid = await productsService.getProductBy({_id:pid})
                 if(!pidIsValid){
                     return res.status(404).json({
                         error: `ERROR: Cart could not be replaced`,
@@ -154,7 +160,8 @@ export class CartsController{
      
         
         try{
-            const cartEditDetails = await cartManager.replaceCart(cid,newCartDetails)
+            //const cartEditDetails = await cartManager.replaceCart(cid,newCartDetails)
+            const cartEditDetails = await cartsService.replaceProductsInCart(cid,newCartDetails)
             if(!cartEditDetails){
                 return res.status(404).json({
                     error: `ERROR: Cart id# could not be replaced`,
@@ -196,14 +203,16 @@ export class CartsController{
         }
     
         try{
-            const productIsValid = await productManager.getProductById(pid)
+            //const productIsValid = await productManager.getProductById(pid)
+            const productIsValid = await productsService.getProductBy({_id:pid})
             if(!productIsValid){
                 return res.status(400).json({
                     error: `ERROR: Product id# provided is not valid`,
                     message: `Failed to update cart with Id#${cid} due to invalid argument: The product id provided (id#${pid}) does not exist in our database. Please verify and try again`
                 })
             }
-            const cartIsValid = await cartManager.getCartById(cid)
+            //const cartIsValid = await cartManager.getCartById(cid)
+            const cartIsValid = await cartsService.getCartById(cid)
             if(!cartIsValid){
                 return res.status(400).json({
                     error: `ERROR: Cart id# provided is not valid`,
@@ -218,10 +227,12 @@ export class CartsController{
         }
         
         try{
-            const productAlreadyInCart = await cartManager.findProductInCart(cid,pid) 
+            //const productAlreadyInCart = await cartManager.findProductInCart(cid,pid) 
+            const productAlreadyInCart = await cartsService.findProductInCart(cid,pid) 
             if(productAlreadyInCart){
                 try{
-                    const updatedCart = await cartManager.updateProductInCartQuantity(cid,pid,qty)
+                   // const updatedCart = await cartManager.updateProductInCartQuantity(cid,pid,qty)
+                    const updatedCart = await cartsService.updateProductQtyInCart(cid,pid,qty)
                     if(!updatedCart){
                         return res.status(404).json({
                             error: `ERROR: Failed to update the intended product quantity in cart`,
@@ -246,7 +257,8 @@ export class CartsController{
     
         //future improvement - seek for better method (change +1 for +N even on first iteration if desired)
         try{
-            const updatedCart = await cartManager.updateCart(cid,pid)
+           // const updatedCart = await cartManager.updateCart(cid,pid)
+            const updatedCart = await cartsService.addProductToCart(cid,pid)
             if(!updatedCart){
                 return res.status(404).json({
                     error: `ERROR: Failed to update the intended product in cart`,
@@ -264,8 +276,9 @@ export class CartsController{
         }
     }
 
-    static emptyCartContent=async(req,res)=>{
+    static deleteAllProductsInCart=async(req,res)=>{
         const {cid} = req.params
+      
         res.setHeader('Content-type', 'application/json');
     
         if(!isValidObjectId(cid)){       
@@ -273,7 +286,8 @@ export class CartsController{
         }
     
         try {
-            const deletedCart = await cartManager.deleteCart(cid)
+            //const deletedCart = await cartManager.deleteCart(cid)
+            const deletedCart = await cartsService.deleteProductsInCart(cid)
             if(!deletedCart){
                 return res.status(404).json({
                     error: `ERROR: Cart id# provided was not found`,
@@ -291,7 +305,7 @@ export class CartsController{
         }
     }
 
-    static deleteProductInCart=async(req,res)=>{
+    static deleteSingleProductInCart=async(req,res)=>{
         const {cid, pid} = req.params;
         res.setHeader('Content-type', 'application/json');
     
@@ -304,7 +318,8 @@ export class CartsController{
         }
     
         try{
-            const isProductIdValid = await productManager.getProductById(pid)
+            //const isProductIdValid = await productManager.getProductById(pid)
+            const isProductIdValid = await productsService.getProductBy({_id:pid})
             if(!isProductIdValid){
                 return res.status(404).json({
                     error: `ERROR: Product id# provided was not found`,
@@ -312,7 +327,8 @@ export class CartsController{
                 })
             }
     
-            const isCartIdValid = await cartManager.getCartById(cid)
+            //const isCartIdValid = await cartManager.getCartById(cid)
+            const isCartIdValid = await cartsService.getCartById(cid)
             if(!isCartIdValid){
                 return res.status(404).json({
                     error: `ERROR: Cart id# provided was not found`,
@@ -320,7 +336,8 @@ export class CartsController{
                 })
             }
     
-            const isProductInCart = await cartManager.findProductInCart(cid,pid)
+            //const isProductInCart = await cartManager.findProductInCart(cid,pid)
+            const isProductInCart = await cartsService.findProductInCart(cid,pid)
             if(!isProductInCart){
                 return res.status(404).json({
                     error: `ERROR: Product id# was not found in this cartid#`,
@@ -335,7 +352,8 @@ export class CartsController{
         }
     
         try {
-            const deletedProductInCart = await cartManager.deleteProductInCart(cid,pid)
+            //const deletedProductInCart = await cartManager.deleteProductInCart(cid,pid)
+            const deletedProductInCart = await cartsService.deleteProductsInCart(cid,pid)
             if(!deletedProductInCart){
                 return res.status(404).json({
                     error: `ERROR: Failed to delete product in cart`,
