@@ -1,11 +1,12 @@
 import { CartManagerMONGO as CartManager } from '../dao/cartManagerMONGO.js'
 import { productsService } from '../services/productsService.js';
 import { cartsService } from '../services/cartsService.js';
+import { ticketsService } from '../services/ticketsService.js';
 import { ProductManagerMONGO as ProductManager } from '../dao/productManagerMONGO.js';
 import { isValidObjectId } from 'mongoose';
 
-const cartManager = new CartManager()
-const productManager = new ProductManager()
+// const cartManager = new CartManager()
+// const productManager = new ProductManager()
 
 export class CartsController{
     static getCarts=async(req,res)=>{
@@ -370,4 +371,59 @@ export class CartsController{
             })
         }
     }
+
+    static completePurchase=async(req,res)=>{
+        const {cid} =req.params
+        const userEmail = req.session.user.email
+
+        if(!isValidObjectId(cid)){
+            return res.status(400).json({error:`The Cart ID# provided is not an accepted Id Format in MONGODB database. Please verify your Cart ID# and try again`})
+        }
+
+
+        console.log('el carrito numero#-->',cid)
+        console.log('el email del usuario-->',userEmail)
+
+        const matchingCart = await cartsService.getCartById(cid) 
+        console.log('el matching Cart-->',matchingCart)
+
+        matchingCart.products.map(p=>{
+
+            productQty = p.qty
+            productStock=p.pid.stock
+
+            if(p.qty<=p.pid.stock){
+                const newProductStock = p.pid.stock-p.qty
+                //aca va la ruta / servicio que modifica la cantidad de STICJ un producto especifico
+                // TMB VA la ruta de servicio que modifica el carrito -- no se si se modifica asi o via REPLACE sig logica
+            }
+
+            if(p.qty>p.pid.stock){
+                //aca va la ruta que pushea la cantidad de este producto al TICKET .. y que lo deja en el carrito // quiza es el replace¡
+            }
+            console.log('aca va el qty solicitado',p.qty)
+            console.log('Acá van los STOCK DE productos deste cart-->',p.pid.stock)
+        })
+
+
+        res.setHeader('Content-type', 'application/json');
+        return res.status(200).json({payload: 'ya se armo la compra bb -- producto posteado'})
+    }
+
+    static getPurchaseTicket=async(req,res)=>{
+
+        const {cid} =req.params
+
+        if(!isValidObjectId(cid)){
+            return res.status(400).json({error:`The Cart ID# provided is not an accepted Id Format in MONGODB database. Please verify your Cart ID# and try again`})
+        }
+
+        const matchingCart = await cartsService.getCartById(cid) 
+
+        console.log('el matching Cart..-->',matchingCart)
+
+        res.setHeader('Content-type', 'application/json');
+        return res.status(200).json({payload: 'aqui esta tu ticket de compra bb '})
+    }
+    
 }

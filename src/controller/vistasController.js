@@ -150,5 +150,14 @@ export class VistasController{
         res.setHeader('Content-type', 'text/html');
         res.status(200).render('logout')
     }
+
+    static renderPurchase=async(req,res)=>{
+        res.setHeader('Content-type', 'text/html');
+        res.status(200).render('ticket',{
+            sessionData: req.session
+        })
+
+        console.log(req.session.user.cart)
+    }
 }
 

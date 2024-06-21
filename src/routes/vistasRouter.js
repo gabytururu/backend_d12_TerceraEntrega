@@ -13,4 +13,5 @@ router.get('/registro', customAuth(["public"]),VistasController.renderRegistro)
 router.get('/login',customAuth(["public"]),VistasController.renderLogin)
 router.get('/perfil',customAuth(["user","manager"]),VistasController.renderPerfil)
 router.get('/logout',customAuth(["public"]),VistasController.renderLogout)
+router.get('/purchase',customAuth(["public"]),VistasController.renderPurchase)
 

@@ -5,12 +5,5 @@ export class userDTO{
         this.cart= user.cart
         this.age=user.age
         this.rol=user.rol
-
-        // nombre: currentUser.first_name,
-        //     apellido: currentUser.last_name,
-        //     edad: currentUser.age,
-        //     email: currentUser.email,
-        //     rol:currentUser.rol,
-        //     carrito:currentUser.cart
     }
 }

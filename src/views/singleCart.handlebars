@@ -20,6 +20,13 @@
                     <hr class="line"> 
                 {{/each}}
             </div>
+            <div class="finalizePurchase">
+                {{!-- <button class="finalizePurchaseBtn" >Finalizar Compra</button> --}}
+                 <a href="/{{matchingCart._id}}/purchase" class="finalizePurchaseBtn" data-user-cid="{{user.cart}}">Finalizar Compra</a>
+            </div>
+            
         </div>
+        
     </div>
+    
 </div>

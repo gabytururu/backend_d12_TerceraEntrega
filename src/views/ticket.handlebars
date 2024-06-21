@@ -1,0 +1,43 @@
+{{#if userProfile.isPublic}}
+    {{>menu}}
+{{else}}
+    {{>menuLoggedUser}}
+{{/if}}
+
+<div class="mainContainer">
+    <div class="titles">
+        <h1>¡Gracias por tu Compra!</h1>
+    </div>
+</div>
+
+<div class="productsContainer">       
+    <div class="productsList">
+        <div class="productCard">
+            <h2>Tu Compra Incluyó:</h2>
+            <div class="resultsliContainer">
+                <div>
+                    <span></span><p>Producto x</p><p>$$</p></span>
+                    <span></span><p>Producto y</p><p>$$</p></span>
+                    <span></span><p>Producto z</p><p>$$</p></span>
+                </div>
+                <div>
+                    <p>Los siguientes productos no pudieron procesarse por no contar con suficiente stock:</p>
+                        <ul>
+                            <li>prod a</li>
+                            <li>prod b</li>
+                        </ul>
+                    <p>Estos productos han quedado guardados en tu carrito para futuras compras</p>
+                </div>
+            </div>
+
+{{!-- 
+            <div class="finalizePurchase">
+                {{!-- <button class="finalizePurchaseBtn" >Finalizar Compra</button> --}}
+                 <a href="/{{matchingCart._id}}/purchase" class="finalizePurchaseBtn" data-user-cid="{{user.cart}}">Finalizar Compra</a>
+            </div> --}}
+            
+        </div>
+        
+    </div>
+    
+</div>
