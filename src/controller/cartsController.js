@@ -387,23 +387,47 @@ export class CartsController{
         const matchingCart = await cartsService.getCartById(cid) 
         console.log('el matching Cart-->',matchingCart)
 
-        matchingCart.products.map(p=>{
+        for(let p of matchingCart.products){
+            const productDetails= p.pid
+            const productQty = p.qty
+            const productStock=p.pid.stock
 
-            productQty = p.qty
-            productStock=p.pid.stock
-
+            let newProductStock;
             if(p.qty<=p.pid.stock){
-                const newProductStock = p.pid.stock-p.qty
-                //aca va la ruta / servicio que modifica la cantidad de STICJ un producto especifico
-                // TMB VA la ruta de servicio que modifica el carrito -- no se si se modifica asi o via REPLACE sig logica
-            }
+                newProductStock = p.pid.stock-p.qty
 
-            if(p.qty>p.pid.stock){
-                //aca va la ruta que pushea la cantidad de este producto al TICKET .. y que lo deja en el carrito // quiza es el replace¡
+            //usando esto solo para no alterar la db tanto pero ya funciona la ruta updateproduct con el servicio de mongo
+            let updatedProduct = [p.pid._id.toString(),{stock:newProductStock}]
+             console.log('el updated product-->',updatedProduct)
+            
+            // let updatedProduct = await productsService.updateProduct(p.pid._id.toString(),{stock:newProductStock})
+            // console.log('El updated product -->',updatedProduct)
             }
-            console.log('aca va el qty solicitado',p.qty)
-            console.log('Acá van los STOCK DE productos deste cart-->',p.pid.stock)
-        })
+        }
+        // matchingCart.products.map(p=>{
+        //     const productDetails= p.pid
+        //     const productQty = p.qty
+        //     const productStock=p.pid.stock
+        //     //console.log('full product Details--->',productDetails)
+        //     let newProductStock;
+        //     if(p.qty<=p.pid.stock){
+        //         newProductStock = p.pid.stock-p.qty
+        //         // console.log('el nuevo stock post compra',newProductStock)
+        //         // const updatedProduct={"pid":p.pid._id, "qty":newProductStock}
+        //         // console.log('el updated product-->',updatedProduct)
+        //         //aca va la ruta / servicio que modifica la cantidad de STICJ un producto especifico
+        //         // TMB VA la ruta de servicio que modifica el carrito -- no se si se modifica asi o via REPLACE sig logica
+        //     }
+        //     //let updatedProduct = await productsService.updateProduct({id:p.pid._id},{stock:newProductStock})
+        //     let updatedProduct = [{id:p.pid._id.toString()},{stock:newProductStock}]
+        //     console.log('el updated product-->',updatedProduct)
+
+        //     if(p.qty>p.pid.stock){
+        //         //aca va la ruta que pushea la cantidad de este producto al TICKET .. y que lo deja en el carrito // quiza es el replace¡
+        //     }
+        //     console.log('aca va el qty solicitado',p.qty)
+        //     console.log('Acá van los STOCK DE productos deste cart-->',p.pid.stock)
+        // })
 
 
         res.setHeader('Content-type', 'application/json');
