@@ -11,6 +11,6 @@ router.put('/:cid',customAuth(["public","user"]),CartsController.replaceCartCont
 router.put('/:cid/products/:pid',customAuth(["public","user"]),CartsController.updateProductInCart)
 router.delete('/:cid',customAuth(["public","user"]), CartsController.deleteAllProductsInCart)
 router.delete('/:cid/products/:pid',customAuth(["public","user"]),CartsController.deleteSingleProductInCart )
-router.get('/:cid/purchase',CartsController.getPurchaseTicket)
 router.post('/:cid/purchase',CartsController.completePurchase)
+router.get('/:cid/purchase',CartsController.getPurchaseTicket)
 

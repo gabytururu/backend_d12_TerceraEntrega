@@ -406,23 +406,24 @@ export class CartsController{
     
             const ticketSubtotals = purchasedProducts.map(p=>p.subtotal)
             const ticketTotal = ticketSubtotals.reduce((ticketTotalAcc,subtotal)=>ticketTotalAcc+subtotal,0)
-            const remainingCart = await cartsService.getCartById(cartId) 
-    
-            return res.status(200).json({
-                payload: {
-                    code: uniqueCode,
-                    purchaser:userEmail,
-                    amountTotal: ticketTotal,
-                    productsPurchased:purchasedProducts,
-                    productsLeftInCart:remainingCart.products.map(p=>p.pid._id)
-                }
-            })
+            const remainingCart = await cartsService.getCartById(cartId)       
+            const ticketDetails={
+                code: uniqueCode,
+                purchaser:userEmail,
+                amount: ticketTotal,
+                productsPurchased:purchasedProducts,
+                productsLeftInCart:remainingCart.products.map(p=>p.pid._id)
+            }
+
+            const ticketCreated = await ticketsService.createTicket(ticketDetails)    
+            return res.status(200).json({payload:ticketCreated})
         }catch(error){
             return res.status(500).json({
                 error:`Error 500 Server failed unexpectedly, please try again later`,
                 message: `${error.message}`
             })
         }        
+      
     }
 
     static getPurchaseTicket=async(req,res)=>{
