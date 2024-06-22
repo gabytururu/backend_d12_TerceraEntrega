@@ -28,6 +28,17 @@ export const passportCallError = (estrategia) =>{
     }
 }
 
+export const uniqueTicketCode = (user)=>{
+
+    const nameCode = user.first_name.slice(0,2).toUpperCase()
+    const lastnameCode = user.last_name.slice(0,2).toUpperCase()
+    const dateTimeCode = new Date().toISOString().replace(/[-:.TZ]/g, '')
+
+    const uniqueCode = `${nameCode}${lastnameCode}${dateTimeCode}`
+
+    return uniqueCode
+}
+
 //future development
 // export const ROLES = Object.freeze({
 //     admin: 'admin',

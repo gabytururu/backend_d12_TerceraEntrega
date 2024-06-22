@@ -4,6 +4,8 @@ import { cartsService } from '../services/cartsService.js';
 import { ticketsService } from '../services/ticketsService.js';
 import { ProductManagerMONGO as ProductManager } from '../dao/productManagerMONGO.js';
 import { isValidObjectId } from 'mongoose';
+import { ticketDTO } from '../DTO/ticketDTO.js';
+import { uniqueTicketCode } from '../utils.js'
 
 // const cartManager = new CartManager()
 // const productManager = new ProductManager()
@@ -373,65 +375,54 @@ export class CartsController{
     }
 
     static completePurchase=async(req,res)=>{
-        const {cid} =req.params
-        const userEmail = req.session.user.email
-
+        res.setHeader('Content-type', 'application/json');
+        const {cid} =req.params;
+        const userEmail = req.session.user.email;
+        const uniqueCode = uniqueTicketCode(req.session.user)
+        let purchasedProducts=[];
+        
         if(!isValidObjectId(cid)){
             return res.status(400).json({error:`The Cart ID# provided is not an accepted Id Format in MONGODB database. Please verify your Cart ID# and try again`})
         }
 
-
-        console.log('el carrito numero#-->',cid)
-        console.log('el email del usuario-->',userEmail)
-
-        const matchingCart = await cartsService.getCartById(cid) 
-        console.log('el matching Cart-->',matchingCart)
-
-        for(let p of matchingCart.products){
-            const productDetails= p.pid
-            const productQty = p.qty
-            const productStock=p.pid.stock
-
-            let newProductStock;
-            if(p.qty<=p.pid.stock){
-                newProductStock = p.pid.stock-p.qty
-
-            //usando esto solo para no alterar la db tanto pero ya funciona la ruta updateproduct con el servicio de mongo
-            let updatedProduct = [p.pid._id.toString(),{stock:newProductStock}]
-             console.log('el updated product-->',updatedProduct)
-            
-            // let updatedProduct = await productsService.updateProduct(p.pid._id.toString(),{stock:newProductStock})
-            // console.log('El updated product -->',updatedProduct)
+        try{
+            const matchingCart = await cartsService.getCartById(cid) 
+            const cartId = matchingCart._id.toString()
+    
+            for(let p of matchingCart.products){
+                const productDetails= p.pid
+                const productOrderQty = p.qty
+                const productId = p.pid._id.toString()
+                const productStock=p.pid.stock
+                //let newProductStock;
+                if(productOrderQty<=productStock){
+                    const newProductStock = productStock-productOrderQty  
+                    const updateProductStock = await productsService.updateProduct(productId,{stock:newProductStock}) 
+                    const deleteProductInCart = await cartsService.deleteProductsInCart(cartId,productId)
+                    const orderTicket = {...productDetails, qty:productOrderQty}
+                    purchasedProducts.push(new ticketDTO(orderTicket))
+                }           
             }
-        }
-        // matchingCart.products.map(p=>{
-        //     const productDetails= p.pid
-        //     const productQty = p.qty
-        //     const productStock=p.pid.stock
-        //     //console.log('full product Details--->',productDetails)
-        //     let newProductStock;
-        //     if(p.qty<=p.pid.stock){
-        //         newProductStock = p.pid.stock-p.qty
-        //         // console.log('el nuevo stock post compra',newProductStock)
-        //         // const updatedProduct={"pid":p.pid._id, "qty":newProductStock}
-        //         // console.log('el updated product-->',updatedProduct)
-        //         //aca va la ruta / servicio que modifica la cantidad de STICJ un producto especifico
-        //         // TMB VA la ruta de servicio que modifica el carrito -- no se si se modifica asi o via REPLACE sig logica
-        //     }
-        //     //let updatedProduct = await productsService.updateProduct({id:p.pid._id},{stock:newProductStock})
-        //     let updatedProduct = [{id:p.pid._id.toString()},{stock:newProductStock}]
-        //     console.log('el updated product-->',updatedProduct)
-
-        //     if(p.qty>p.pid.stock){
-        //         //aca va la ruta que pushea la cantidad de este producto al TICKET .. y que lo deja en el carrito // quiza es el replace¡
-        //     }
-        //     console.log('aca va el qty solicitado',p.qty)
-        //     console.log('Acá van los STOCK DE productos deste cart-->',p.pid.stock)
-        // })
-
-
-        res.setHeader('Content-type', 'application/json');
-        return res.status(200).json({payload: 'ya se armo la compra bb -- producto posteado'})
+    
+            const ticketSubtotals = purchasedProducts.map(p=>p.subtotal)
+            const ticketTotal = ticketSubtotals.reduce((ticketTotalAcc,subtotal)=>ticketTotalAcc+subtotal,0)
+            const remainingCart = await cartsService.getCartById(cartId) 
+    
+            return res.status(200).json({
+                payload: {
+                    code: uniqueCode,
+                    purchaser:userEmail,
+                    amountTotal: ticketTotal,
+                    productsPurchased:purchasedProducts,
+                    productsLeftInCart:remainingCart.products.map(p=>p.pid._id)
+                }
+            })
+        }catch(error){
+            return res.status(500).json({
+                error:`Error 500 Server failed unexpectedly, please try again later`,
+                message: `${error.message}`
+            })
+        }        
     }
 
     static getPurchaseTicket=async(req,res)=>{
