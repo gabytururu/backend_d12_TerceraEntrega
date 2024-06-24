@@ -157,7 +157,9 @@ export class VistasController{
             sessionData: req.session
         })
 
-        console.log(req.session.user.cart)
+        // console.log(req.session.user.cart)
     }
+
+
 }
 

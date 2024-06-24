@@ -7,6 +7,7 @@ export class TicketsMongoDAO{
     }
 
     async getOneBy(filter){
-        return await ticketsModel.findOne(filter).populate("users").lean()
+        //return await ticketsModel.findOne(filter).populate("users").lean()
+        return await ticketsModel.findOne(filter).lean()
     }
 }

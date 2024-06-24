@@ -428,18 +428,18 @@ export class CartsController{
 
     static getPurchaseTicket=async(req,res)=>{
 
-        const {cid} =req.params
+        const {cid,tid} =req.params
 
         if(!isValidObjectId(cid)){
             return res.status(400).json({error:`The Cart ID# provided is not an accepted Id Format in MONGODB database. Please verify your Cart ID# and try again`})
         }
 
-        const matchingCart = await cartsService.getCartById(cid) 
+        const matchingTicket = await ticketsService.getPurchaseTicket({_id:tid})
 
-        console.log('el matching Cart..-->',matchingCart)
+        console.log('el matching ticket..-->',matchingTicket)
 
         res.setHeader('Content-type', 'application/json');
-        return res.status(200).json({payload: 'aqui esta tu ticket de compra bb '})
+        return res.status(200).json({payload: matchingTicket})
     }
     
 }
