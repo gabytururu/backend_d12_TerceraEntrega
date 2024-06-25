@@ -19,7 +19,17 @@ const usersSchema = new mongoose.Schema(
         rol:{
             type:String,
             default:"user"
-        }      
+        },
+        tickets: {
+            type:[
+                {
+                    orderTicket:{
+                        type:mongoose.Types.ObjectId,
+                        ref:"tickets"
+                    }
+                }
+            ]
+        }     
     },
     {timestamps:true, strict:false}
 )

@@ -6,9 +6,11 @@ import { ProductManagerMONGO as ProductManager } from '../dao/productManagerMONG
 import { isValidObjectId } from 'mongoose';
 import { ticketDTO } from '../DTO/ticketDTO.js';
 import { uniqueTicketCode } from '../utils.js'
+import { UsersManagerMongo as UsersManager } from '../dao/usersManagerMONGO.js';
 
 // const cartManager = new CartManager()
 // const productManager = new ProductManager()
+const usersManager = new UsersManager()
 
 export class CartsController{
     static getCarts=async(req,res)=>{
@@ -377,12 +379,21 @@ export class CartsController{
     static completePurchase=async(req,res)=>{
         res.setHeader('Content-type', 'application/json');
         const {cid} =req.params;
+       // const { userEmail, userCart} = req.session.user
         const userEmail = req.session.user.email;
+        const userCart = req.session.user.cart
+        const userId = req.session.user._id
+        console.log('el cid de params', cid)
+        console.log('el cartId de req,session', userCart._id)
         const uniqueCode = uniqueTicketCode(req.session.user)
         let purchasedProducts=[];
         
         if(!isValidObjectId(cid)){
             return res.status(400).json({error:`The Cart ID# provided is not an accepted Id Format in MONGODB database. Please verify your Cart ID# and try again`})
+        }
+
+        if(cid !== userCart._id){
+            return res.status(400).json({error:`Purchase Cannot be completed: There is a missmatch between the cart Id referenced in your url (id#${cid}) and the one associated with the user trying to complete the purchase (id#${userCart}) Please verify and try again`})
         }
 
         try{
@@ -410,12 +421,16 @@ export class CartsController{
             const ticketDetails={
                 code: uniqueCode,
                 purchaser:userEmail,
+                //cart:userCart,
                 amount: ticketTotal,
                 productsPurchased:purchasedProducts,
-                productsLeftInCart:remainingCart.products.map(p=>p.pid._id)
+                productsLeftInCart:remainingCart.products.map(p=>p.pid._id),
+                carts:userCart,
             }
-
+            console.log('los ticket details (COMPLETE PURCHASE POST)-->',ticketDetails)
             const ticketCreated = await ticketsService.createTicket(ticketDetails)    
+            console.log('el id del nuevo ticket creado:',ticketCreated._id)
+            const ticketUserAssigned = await usersManager.addTicketToUser(userId,ticketCreated._id)
             return res.status(200).json({payload:ticketCreated})
         }catch(error){
             return res.status(500).json({
@@ -423,7 +438,6 @@ export class CartsController{
                 message: `${error.message}`
             })
         }        
-      
     }
 
     static getPurchaseTicket=async(req,res)=>{
@@ -434,9 +448,13 @@ export class CartsController{
             return res.status(400).json({error:`The Cart ID# provided is not an accepted Id Format in MONGODB database. Please verify your Cart ID# and try again`})
         }
 
+        //get user by cid --- 
+
+        //find a tid inside a user -- not found ?? not valid cid =/ tid mismatch --- yes found? continue
+
         const matchingTicket = await ticketsService.getPurchaseTicket({_id:tid})
 
-        console.log('el matching ticket..-->',matchingTicket)
+        //console.log('el matching ticket GET ONE GET..-->',matchingTicket)
 
         res.setHeader('Content-type', 'application/json');
         return res.status(200).json({payload: matchingTicket})

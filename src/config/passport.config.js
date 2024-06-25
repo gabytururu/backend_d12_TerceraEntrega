@@ -3,7 +3,7 @@ import local from "passport-local";
 import github from "passport-github2";
 import { config } from "./config.js";
 import { CartManagerMONGO as CartManager } from "../dao/cartManagerMONGO.js";
-import { usersManagerMongo as UsersManager } from "../dao/usersManagerMONGO.js";
+import { UsersManagerMongo as UsersManager } from "../dao/usersManagerMONGO.js";
 import { hashPassword, validatePassword } from "../utils.js";
 
 const cartManager = new CartManager()

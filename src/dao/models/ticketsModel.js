@@ -6,10 +6,11 @@ const ticketsSchema = new mongoose.Schema(
     {
         code:String, //autogenerarse y ser unico
         amount: Number, //total de la compra
-        // purchaser: {
-        //     type: mongoose.Types.ObjectId,
-        //     ref: "users"
-        // },
+        carts: 
+            {
+            type: mongoose.Types.ObjectId,
+            ref: "carts"
+        },
         purchaser: String,
         productsPurchased: Array,
         productsLeftInCart:Array
