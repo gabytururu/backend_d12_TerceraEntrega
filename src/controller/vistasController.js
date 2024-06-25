@@ -1,9 +1,12 @@
-import { ProductManagerMONGO as ProductManager } from "../dao/productManagerMONGO.js";
-import { CartManagerMONGO as CartManager } from "../dao/cartManagerMONGO.js";
+// import { ProductManagerMONGO as ProductManager } from "../dao/productManagerMONGO.js";
+// import { CartManagerMONGO as CartManager } from "../dao/cartManagerMONGO.js";
+import { productsService } from "../services/productsService.js";
+import { cartsService } from "../services/cartsService.js";
 import { ticketsService } from "../services/ticketsService.js";
 
-const productManager = new ProductManager();
-const cartManager = new CartManager();
+
+// const productManager = new ProductManager();
+// const cartManager = new CartManager();
 
 export class VistasController{
     static renderHome=async(req,res)=>{
@@ -27,7 +30,10 @@ export class VistasController{
     
     
         try{
-            const {docs:products,page,totalPages, hasPrevPage, hasNextPage, prevPage,nextPage} = await productManager.getProducts(query,{pagina,limit,sort})
+            //const {docs:products,page,totalPages, hasPrevPage, hasNextPage, prevPage,nextPage} = await productManager.getProducts(query,{pagina,limit,sort})
+            const {docs:products,page,totalPages, hasPrevPage, hasNextPage, prevPage,nextPage} = await productsService.getProducts(query,{pagina,limit,sort})
+
+
             res.setHeader('Content-type', 'text/html');
             res.status(200).render('products',{
                 products,
@@ -58,7 +64,8 @@ export class VistasController{
         userProfile.isPublic= userProfile.rol === 'public';      
        
         try{
-            const matchingProduct = await productManager.getProductByFilter({_id:pid})
+            //const matchingProduct = await productManager.getProductByFilter({_id:pid})
+            const matchingProduct = await productsService.getProductBy({_id:pid})
             if(!matchingProduct){
                 res.setHeader('Content-type', 'application/json');
                 return res.status(404).json({
@@ -78,7 +85,8 @@ export class VistasController{
 
     static renderCarts=async(req,res)=>{
         try{
-            const carts = await cartManager.getCarts()
+            //const carts = await cartManager.getCarts()
+            const carts = await cartsService.getCarts()
             if(!carts){
                 return res.status(404).json({
                     error: `ERROR: resource not found`,
@@ -101,7 +109,8 @@ export class VistasController{
         const {cid} = req.params
        
         try{
-            const matchingCart = await cartManager.getCartById(cid)
+           // const matchingCart = await cartManager.getCartById(cid)
+            const matchingCart = await cartsService.getCartById(cid)
             if(!matchingCart){
                 return res.status(404).json({
                     error: `ERROR: Cart id# provided was not found`,

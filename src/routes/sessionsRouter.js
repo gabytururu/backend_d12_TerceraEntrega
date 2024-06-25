@@ -117,7 +117,7 @@ router.put('/users/:uid/:orderTicket',customAuth(["user"]),async(req,res)=>{
     return res.status(200).json({payload:updatedUser})    
 })
 
-router.get('/logout', customAuth(["user"]),async(req,res)=>{
+router.get('/logout', customAuth(["user","admin"]),async(req,res)=>{
     req.session.destroy(error=>{
         if(error){
             res.setHeader('Content-type', 'application/json');
