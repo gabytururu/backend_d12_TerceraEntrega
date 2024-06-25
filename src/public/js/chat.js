@@ -1,3 +1,14 @@
+async function getSessionData() {
+    const response = await fetch('/api/sessions/current');
+    // if (!response.ok) {
+    //   throw new Error('Network response was not ok');
+    // }
+    const currentUser = await response.json();
+    const currentUserEmail = await currentUser.payload.email;
+    return currentUserEmail
+}
+
+
 Swal.fire({
     title:'Bienvenid@',
     input:'text',
@@ -5,10 +16,18 @@ Swal.fire({
     inputValidator:(value)=>{
         return !value && 'Lo sentimos no podemos continuar sin tu e-mail...!!'
     },
+    preConfirm:async(mailInput)=>{
+        const currentUserEmail = await getSessionData()
+        if (mailInput !== currentUserEmail){
+            Swal.showValidationMessage('El mail brindado no coincide con el del usuario registrado...!!')
+            //throw new Error('Email mismatch');
+        }
+        return mailInput
+    },
     allowOutsideClick: false
-}).then(mailInput =>{
-    console.log(mailInput)
+}).then(mailInput =>{  
     let email = mailInput.value
+
     document.title =  email
     let inputMensaje = document.querySelector('.mensaje')
     let divMensajes = document.querySelector('.mensajes')
@@ -40,7 +59,6 @@ Swal.fire({
             e.target.focus()
         }
     })
-
     socket.on("displayNewMessage", (email, message)=>{
         divMensajes.innerHTML += `<div class="mensajePush"><strong>${email} dice:</strong> <i>${message}</i></div><br>`
         divMensajes.scrollTop=divMensajes.scrollHeight
