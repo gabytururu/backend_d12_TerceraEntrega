@@ -7,6 +7,8 @@
 <div class="mainContainer">
     <div class="titles">
         <h1>¡Gracias por tu Compra!</h1>
+        <h4>Código de Ticket #{{ticketDetails.code}}</h4>
+        <small>{{ticketDetails.createdAt}}</small>
     </div>
 </div>
 
@@ -18,28 +20,25 @@
                 {{#each ticketDetails.productsPurchased}}
                     <div>                   
                         <p><strong>{{qty}} {{title}} ${{price}} USD</strong></p>
-                    <hr>
-                    <hr>
-                    </div>
-                    
+                        <hr>
+                        <hr>
+                    </div>                    
                 {{/each}}
                 <div>            
                     <p><strong>Total:</strong> ${{ticketDetails.amount}} USD</p>
-               
-                </div>
-            </div>
-                <p><small><i>*Nota: Los siguientes productos no fueron procesados por falta de stock, permanecerá en tu carrito por si deseas adquirirlo más adelante:</i></small></p>
-                <ul>
-                    {{#each ticketDetails.carts.products}}
-                    <li><small><i>{{pid}}</i></small></li>
-                    {{/each}}
-                </ul>
-                
+                </div> 
+                <div>           
+                    <p><small><i>*Nota: Los siguientes productos no fueron procesados por falta de stock, permanecerá en tu carrito por si deseas adquirirlo más adelante:</i></small></p>
+                    <ul>
+                        {{#each ticketDetails.carts.products}}
+                            <li><small><i>{{pid}}</i></small></li>
+                        {{/each}}
+                    </ul>
+                </div>                
                 <div class="finalizePurchase">
                     <button class="sendEmail" onClick="sendEmail('{{ticketDetails}}')" data-ticket-details="{{ticketDetails}}">Envia ticket a tu @email</button>
                 </div>
-                 
-                
+            </div>           
         </div>        
     </div>  
     <a href="/products" class="backHome">Volver al Inicio</a> 

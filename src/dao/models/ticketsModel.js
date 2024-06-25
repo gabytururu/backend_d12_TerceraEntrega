@@ -4,8 +4,8 @@ const ticketsCollection = 'tickets'
 
 const ticketsSchema = new mongoose.Schema(
     {
-        code:String, //autogenerarse y ser unico
-        amount: Number, //total de la compra
+        code:String, 
+        amount: Number, 
         carts: 
             {
             type: mongoose.Types.ObjectId,

@@ -1,8 +1,8 @@
-import { CartManagerMONGO as CartManager } from '../dao/cartManagerMONGO.js'
+// import { CartManagerMONGO as CartManager } from '../dao/cartManagerMONGO.js'
 import { productsService } from '../services/productsService.js';
 import { cartsService } from '../services/cartsService.js';
 import { ticketsService } from '../services/ticketsService.js';
-import { ProductManagerMONGO as ProductManager } from '../dao/productManagerMONGO.js';
+// import { ProductManagerMONGO as ProductManager } from '../dao/productManagerMONGO.js';
 import { isValidObjectId } from 'mongoose';
 import { ticketDTO } from '../DTO/ticketDTO.js';
 import { uniqueTicketCode } from '../utils.js'
@@ -380,11 +380,6 @@ export class CartsController{
         res.setHeader('Content-type', 'application/json');
         const {cid} =req.params;
         const { email: userEmail, cart: userCart, _id: userId } = req.session.user
-        // const userEmail = req.session.user.email;
-        // const userCart = req.session.user.cart
-        // const userId = req.session.user._id
-        // console.log('el cid de params', cid)
-        // console.log('el cartId de req,session', userCart._id)
         const uniqueCode = uniqueTicketCode(req.session.user)
         let purchasedProducts=[];
         
@@ -393,7 +388,7 @@ export class CartsController{
         }
 
         if(cid !== userCart._id){
-            return res.status(400).json({error:`Purchase Cannot be completed: There is a missmatch between the cart Id referenced in your url (id#${cid}) and the one associated with the user trying to complete the purchase (id#${userCart}) Please verify and try again`})
+            return res.status(400).json({error:`Purchase Cannot be completed: There is a missmatch between the cart Id referenced in your url (id#${cid}) and the one associated with the user trying to complete the purchase (id#${userCart._id}) Please verify and try again`})
         }
 
         try{
@@ -405,7 +400,6 @@ export class CartsController{
                 const productOrderQty = p.qty
                 const productId = p.pid._id.toString()
                 const productStock=p.pid.stock
-                //let newProductStock;
                 if(productOrderQty<=productStock){
                     const newProductStock = productStock-productOrderQty  
                     const updateProductStock = await productsService.updateProduct(productId,{stock:newProductStock}) 
@@ -421,15 +415,13 @@ export class CartsController{
             const ticketDetails={
                 code: uniqueCode,
                 purchaser:userEmail,
-                //cart:userCart,
                 amount: ticketTotal,
                 productsPurchased:purchasedProducts,
                 productsLeftInCart:remainingCart.products.map(p=>p.pid._id),
                 carts:userCart,
             }
-            console.log('los ticket details (COMPLETE PURCHASE POST)-->',ticketDetails)
+            
             const ticketCreated = await ticketsService.createTicket(ticketDetails)    
-            console.log('el id del nuevo ticket creado:',ticketCreated._id)
             const ticketUserAssigned = await usersManager.addTicketToUser(userId,ticketCreated._id)
             return res.status(200).json({payload:ticketCreated})
         }catch(error){
@@ -441,23 +433,28 @@ export class CartsController{
     }
 
     static getPurchaseTicket=async(req,res)=>{
-
+        res.setHeader('Content-type', 'application/json');
         const {cid,tid} =req.params
+        const {cart: userCart} = req.session.user
 
         if(!isValidObjectId(cid)){
             return res.status(400).json({error:`The Cart ID# provided is not an accepted Id Format in MONGODB database. Please verify your Cart ID# and try again`})
         }
 
-        //get user by cid --- 
+        if(cid !== userCart._id){
+            return res.status(400).json({error:`Ticket Cannot be retreived: the ticket id#${tid} does not belong to the user with the cart id#${userCart._id}.Please verify and try again`})
+        }
 
-        //find a tid inside a user -- not found ?? not valid cid =/ tid mismatch --- yes found? continue
-
-        const matchingTicket = await ticketsService.getPurchaseTicket({_id:tid})
-
-        //console.log('el matching ticket GET ONE GET..-->',matchingTicket)
-
-        res.setHeader('Content-type', 'application/json');
-        return res.status(200).json({payload: matchingTicket})
+        try {
+            const matchingTicket = await ticketsService.getPurchaseTicket({_id:tid})
+            return res.status(200).json({payload: matchingTicket})
+        } catch (error) {
+            return res.status(500).json({
+                error:`Error 500 Server failed unexpectedly, please try again later`,
+                message: `${error.message}`
+            })
+        }
+      
     }
     
 }

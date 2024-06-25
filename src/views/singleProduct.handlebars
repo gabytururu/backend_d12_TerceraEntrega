@@ -25,7 +25,6 @@
                     <p><strong>stock disponible:</strong>{{matchingProduct.stock}} piezas</p>
                     <p><strong>Precio:</strong> ${{matchingProduct.price}}</p>
                 </div>
-                {{!-- just changed id to _id .. see if keeps working --}}
                 <div class="buybuttonContainer">
                     {{#unless userProfile.isPublic}}
                         <button class="buyButton" onClick="finalizePurchase('{{matchingProduct._id}}')" data-user-cid="{{userProfile.cart._id}}">comprar</button>    

@@ -43,23 +43,23 @@
         </div>       
         <h3>Productos Disponibles:</h3>
         <div class="productsList">
-                {{#each products}}
-                    <div class="productCard">
-                        <div class="resultsliContainer">
-                            <p><strong>{{title}}</strong></p>
-                            <p><small>{{_id}}:</small></p>
-                            <div><img src='{{thumbnails}}' width="150px"/></div>
-                            <p>{{description}}</p>
-                            <p><strong>Precio:</strong> ${{price}}</p>
-                        </div>
-                        <div class="buybuttonContainer">
-                                <button class="checkDetails" onClick="checkProductDetails('{{_id}}')">Ver Detalles</button>
-                                {{#unless ../userProfile.isPublic}}
-                                    <button class="buyButton" onClick="addProdToCart('{{_id}}')">comprar</button> 
-                                {{/unless}}                   
-                        </div>
+            {{#each products}}
+                <div class="productCard">
+                    <div class="resultsliContainer">
+                        <p><strong>{{title}}</strong></p>
+                        <p><small>{{_id}}:</small></p>
+                        <div><img src='{{thumbnails}}' width="150px"/></div>
+                        <p>{{description}}</p>
+                        <p><strong>Precio:</strong> ${{price}}</p>
                     </div>
-                {{/each}}
+                    <div class="buybuttonContainer">
+                            <button class="checkDetails" onClick="checkProductDetails('{{_id}}')">Ver Detalles</button>
+                            {{#unless ../userProfile.isPublic}}
+                                <button class="buyButton" onClick="addProdToCart('{{_id}}')">comprar</button> 
+                            {{/unless}}                   
+                    </div>
+                </div>
+            {{/each}}
 
         </div>    
     </div>
