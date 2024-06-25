@@ -29,15 +29,16 @@
                     <p>Estos productos han quedado guardados en tu carrito para futuras compras</p>
                 </div>
             </div>
+              <button class="buyButton" onClick="finalizePurchase('{{matchingProduct._id}}')" data-user-cid="{{userProfile.cart._id}}">comprar</button>   
 
-{{!-- 
+
             <div class="finalizePurchase">
-                {{!-- <button class="finalizePurchaseBtn" >Finalizar Compra</button> --}}
-                 <a href="/{{matchingCart._id}}/purchase" class="finalizePurchaseBtn" data-user-cid="{{user.cart}}">Finalizar Compra</a>
-            </div> --}}
-            
-        </div>
-        
-    </div>
-    
+                <button class="finalizePurchaseBtn" onClick="finalizarCompra('{{ticketDetails}}')" data-ticket-details="{{ticketDetails}}">Finalizar Compra</button>
+                 {{!-- <a href="/{{matchingCart._id}}/purchase" class="finalizePurchaseBtn" data-user-cid="{{user.cart}}">Finalizar Compra</a> --}}
+            </div>            
+        </div>        
+    </div>    
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="/js/products.js"></script>

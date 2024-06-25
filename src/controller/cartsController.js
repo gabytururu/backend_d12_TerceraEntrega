@@ -379,12 +379,12 @@ export class CartsController{
     static completePurchase=async(req,res)=>{
         res.setHeader('Content-type', 'application/json');
         const {cid} =req.params;
-       // const { userEmail, userCart} = req.session.user
-        const userEmail = req.session.user.email;
-        const userCart = req.session.user.cart
-        const userId = req.session.user._id
-        console.log('el cid de params', cid)
-        console.log('el cartId de req,session', userCart._id)
+        const { email: userEmail, cart: userCart, _id: userId } = req.session.user
+        // const userEmail = req.session.user.email;
+        // const userCart = req.session.user.cart
+        // const userId = req.session.user._id
+        // console.log('el cid de params', cid)
+        // console.log('el cartId de req,session', userCart._id)
         const uniqueCode = uniqueTicketCode(req.session.user)
         let purchasedProducts=[];
         

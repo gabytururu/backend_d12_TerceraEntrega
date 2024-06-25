@@ -15,14 +15,14 @@
                 <p>edad: {{userProfile.age}}</p>
                 <p>email: {{userProfile.email}}</p>
                 <p>Rol: {{userProfile.rol}}</p>
-                <p> Id# de tu Carrito: {{userProfile.cart}}</p>
+                <p> Id# de tu Carrito: {{userProfile.cart._id}}</p>
             {{/unless}}
             {{#if userProfile.isPublic}}
                 <h2>¡Hola Visitante!</h2>
                 <p>Requerda que debes registrate/loggearte para poder comprar</p>
             {{/if}}
             {{#if userProfile.isUser}}
-                <a href="/carts/{{userProfile.cart}}" class="userCarts" id="userCart" data-user-cid="{{userProfile.cart}}">Ver tu Carrito</a>
+                <a href="/carts/{{userProfile.cart._id}}" class="userCarts" id="userCart" data-user-cid="{{userProfile.cart._id}}">Ver tu Carrito</a>
             {{/if}}
              {{#if userProfile.isAdmin}}
                 <a href="/carts" class="userCarts" id="allCarts">Ver todos los Carritos</a>

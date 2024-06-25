@@ -28,7 +28,7 @@
                 {{!-- just changed id to _id .. see if keeps working --}}
                 <div class="buybuttonContainer">
                     {{#unless userProfile.isPublic}}
-                        <button class="buyButton" onClick="finalizePurchase('{{matchingProduct._id}}')" data-user-cid="{{userProfile.cart}}">comprar</button>    
+                        <button class="buyButton" onClick="finalizePurchase('{{matchingProduct._id}}')" data-user-cid="{{userProfile.cart._id}}">comprar</button>    
                     {{/unless}}    
                 </div>
             </div>

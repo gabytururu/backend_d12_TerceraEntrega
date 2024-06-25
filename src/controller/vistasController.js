@@ -17,8 +17,8 @@ export class VistasController{
         userProfile.isUser = userProfile.rol === 'user';
         userProfile.isAdmin = userProfile.rol === 'admin';    
         userProfile.isPublic= userProfile.rol === 'public';
-    
-        if (!pagina) pagina=1;
+       
+        if (!pagina) pagina=1;  
         if (!limit) limit=10;
         if (sort) sort= {price:sort};
         if (query.category) query.category = query.category;
@@ -152,6 +152,8 @@ export class VistasController{
     }
 
     static renderPurchase=async(req,res)=>{
+
+        
         res.setHeader('Content-type', 'text/html');
         res.status(200).render('ticket',{
             sessionData: req.session

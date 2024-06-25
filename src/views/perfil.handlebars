@@ -7,7 +7,7 @@
     <p><strong>Edad del Usuario:</strong> {{user.age}}</p>
     <p><strong>E-mail registrado:</strong>{{user.email}}</p>
     <p><strong>Rol del Usuario:</strong>{{user.rol}}</p>
-    <p><strong>Id# de tu Carrito:</strong>{{user.cart}}</p>
+    <p><strong>Id# de tu Carrito:</strong>{{user.cart._id}}</p>
     <br>
-    <a href="/carts/{{user.cart}}" class="userCarts" id="userCart" data-user-cid="{{user.cart}}">Ver tu Carrito</a>
+    <a href="/carts/{{user.cart._id}}" class="userCarts" id="userCart" data-user-cid="{{user.cart._id}}">Ver tu Carrito</a>
 </div>
