@@ -27,7 +27,6 @@ Swal.fire({
     allowOutsideClick: false
 }).then(mailInput =>{  
     let email = mailInput.value
-
     document.title =  email
     let inputMensaje = document.querySelector('.mensaje')
     let divMensajes = document.querySelector('.mensajes')
