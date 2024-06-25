@@ -1,5 +1,6 @@
 import { ProductManagerMONGO as ProductManager } from "../dao/productManagerMONGO.js";
 import { CartManagerMONGO as CartManager } from "../dao/cartManagerMONGO.js";
+import { ticketsService } from "../services/ticketsService.js";
 
 const productManager = new ProductManager();
 const cartManager = new CartManager();
@@ -151,12 +152,25 @@ export class VistasController{
         res.status(200).render('logout')
     }
 
-    static renderPurchase=async(req,res)=>{
+    static renderTicket=async(req,res)=>{
+        const {tid} =req.params
 
-        
+        // if(!isValidObjectId(cid)){
+        //     return res.status(400).json({error:`The Cart ID# provided is not an accepted Id Format in MONGODB database. Please verify your Cart ID# and try again`})
+        // }
+
+        //get user by cid --- 
+
+        //find a tid inside a user -- not found ?? not valid cid =/ tid mismatch --- yes found? continue
+
+        const matchingTicket = await ticketsService.getPurchaseTicket({_id:tid})
+
+        console.log('el matching ticket -->',matchingTicket)
+        console.log('la req. session',req.session)
         res.setHeader('Content-type', 'text/html');
         res.status(200).render('ticket',{
-            sessionData: req.session
+            sessionData: req.session,
+            ticketDetails:matchingTicket
         })
 
         // console.log(req.session.user.cart)

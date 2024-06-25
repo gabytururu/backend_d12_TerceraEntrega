@@ -23,10 +23,19 @@
             <div class="finalizePurchase">
                 {{!-- <button class="finalizePurchaseBtn" >Finalizar Compra</button> --}}
                  {{!-- <a href="/{{matchingCart._id}}/purchase" class="finalizePurchaseBtn" data-user-cid="{{user.cart}}">Finalizar Compra</a> --}}
-                 <a href="/{{matchingCart._id}}/purchase" class="finalizePurchaseBtn" data-user-cid="{{ticketDetails}}">Finalizar Compra</a>
+
+                <div class="buybuttonContainer">                    
+                        <button class="finalizePurchaseBtn" onClick="finalizarCompra('{{matchingCart._id}}')" data-user-cid="{{matchingCart._id}}">Finalizar Compra</button>              
+                </div>
+
+{{!-- 
+                 <a href="/{{matchingCart._id}}/purchase" class="finalizePurchaseBtn" data-user-cid="{{ticketDetails}}">Finalizar Compra</a> --}}
             </div>
             
         </div>
         
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="/js/carts.js"></script>

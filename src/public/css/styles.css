@@ -235,3 +235,13 @@ h2{
     font-size: 17px;
     color:white;
 }
+
+.backHome{
+    background-color: #000080;
+    margin-top:35px;
+    padding: 15px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 17px;
+    color:white;
+}

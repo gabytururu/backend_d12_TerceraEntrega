@@ -13,32 +13,38 @@
 <div class="productsContainer">       
     <div class="productsList">
         <div class="productCard">
-            <h2>Tu Compra Incluyó:</h2>
+            <h2>Tu Compra Incluye:</h2>
             <div class="resultsliContainer">
-                <div>
-                    <span></span><p>Producto x</p><p>$$</p></span>
-                    <span></span><p>Producto y</p><p>$$</p></span>
-                    <span></span><p>Producto z</p><p>$$</p></span>
-                </div>
-                <div>
-                    <p>Los siguientes productos no pudieron procesarse por no contar con suficiente stock:</p>
-                        <ul>
-                            <li>prod a</li>
-                            <li>prod b</li>
-                        </ul>
-                    <p>Estos productos han quedado guardados en tu carrito para futuras compras</p>
+                {{#each ticketDetails.productsPurchased}}
+                    <div>                   
+                        <p><strong>{{qty}} {{title}} ${{price}} USD</strong></p>
+                    <hr>
+                    <hr>
+                    </div>
+                    
+                {{/each}}
+                <div>            
+                    <p><strong>Total:</strong> ${{ticketDetails.amount}} USD</p>
+               
                 </div>
             </div>
-              <button class="buyButton" onClick="finalizePurchase('{{matchingProduct._id}}')" data-user-cid="{{userProfile.cart._id}}">comprar</button>   
-
-
-            <div class="finalizePurchase">
-                <button class="finalizePurchaseBtn" onClick="finalizarCompra('{{ticketDetails}}')" data-ticket-details="{{ticketDetails}}">Finalizar Compra</button>
-                 {{!-- <a href="/{{matchingCart._id}}/purchase" class="finalizePurchaseBtn" data-user-cid="{{user.cart}}">Finalizar Compra</a> --}}
-            </div>            
+                <p><small><i>*Nota: Los siguientes productos no fueron procesados por falta de stock, permanecerá en tu carrito por si deseas adquirirlo más adelante:</i></small></p>
+                <ul>
+                    {{#each ticketDetails.carts.products}}
+                    <li><small><i>{{pid}}</i></small></li>
+                    {{/each}}
+                </ul>
+                
+                <div class="finalizePurchase">
+                    <button class="sendEmail" onClick="sendEmail('{{ticketDetails}}')" data-ticket-details="{{ticketDetails}}">Envia ticket a tu @email</button>
+                </div>
+                 
+                
         </div>        
-    </div>    
+    </div>  
+    <a href="/products" class="backHome">Volver al Inicio</a> 
 </div>
+    
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="/js/products.js"></script>
