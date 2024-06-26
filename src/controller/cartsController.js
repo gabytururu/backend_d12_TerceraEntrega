@@ -430,18 +430,20 @@ export class CartsController{
                 `BACKEND ECOMM TICKET ${config.GMAIL_EMAIL}`,
                 `${userEmail}`,
                 `Tu Compra - Ticket#${ticketCreated._id}`,
-                `<h2>Muchas Gracias por Tu Compra!<h2>
-                 <br>
-                 <p>Tu numero de Ticket es #${ticketCreated._id}</p>,
+                `<h2>Muchas Gracias por Tu Compra!</h2>
+                 <p>Tu numero de Ticket es #${ticketCreated._id}</p>
                  <p>Tu código único es #${uniqueCode}<p>
-                 <p>El total de tu compra fue de $${ticketCreated.amount} USD          
+                 <p>El total de tu compra fue de $${ticketCreated.amount} USD</p>          
+                 <p>Puedes revisar todos los detalles de tu compra la sección de "MI PERFIL" en nuestro sitio web</p>          
                  <br>
                  <h4>Cualquier duda puedes reportarla a nuestro número +52123456789</h4>
                  <br>
                  <h4>Gracias y Sigue comprando con nosotros!!</h4>
                 `              
             )
-            if(emailSent.accepted.length>0) console.log('mail enviado!!')
+            console.log("emailSent Object",emailSent)
+            //nota... siempre acepta el envio -- como manejar el retorno posterior de DNS no encontrado?
+            if(emailSent.accepted.length>0){console.log('mail enviado!!')}else{console.log('Hubo un Error, el correo del usuario no aceptó el email enviado')}
             return res.status(200).json({payload:ticketCreated})
         }catch(error){
             return res.status(500).json({
