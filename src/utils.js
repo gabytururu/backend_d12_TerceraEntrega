@@ -2,6 +2,8 @@ import {fileURLToPath} from 'url';
 import {dirname} from 'path';
 import bcrypt from 'bcrypt';
 import passport from 'passport';
+import nodemailer from 'nodemailer';
+import { config } from './config/config.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename)
@@ -39,6 +41,28 @@ export const uniqueTicketCode = (user)=>{
     return uniqueCode
 }
 
+const transporter=nodemailer.createTransport(
+    {
+        service:"gmail",
+        port:"587", 
+        auth:{
+            user: config.GMAIL_EMAIL, 
+            pass: config.GMAIL_PASS
+        }
+    }
+)
+
+export const sendEmail=async(de,para,asunto,mensaje)=>{
+    return await transporter.sendMail(
+        {
+            from:de,
+            to:para,
+            subject:asunto,
+            html:mensaje,
+        }
+    )
+}
+
 //future development
 // export const ROLES = Object.freeze({
 //     admin: 'admin',
@@ -46,4 +70,3 @@ export const uniqueTicketCode = (user)=>{
 //     premium: 'premium_user',
 //     public: 'public'
 // });
-

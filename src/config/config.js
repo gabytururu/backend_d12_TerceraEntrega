@@ -13,5 +13,7 @@ export const config={
     GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID,
     GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET,
     GITHUB_CALLBACK_URL: process.env.GITHUB_CALLBACK_URL,
-    SESSION_SECRET: process.env.SESSION_SECRET
+    SESSION_SECRET: process.env.SESSION_SECRET,
+    GMAIL_EMAIL:process.env.GMAIL_EMAIL,
+    GMAIL_PASS:process.env.GMAIL_PASS,
 }
