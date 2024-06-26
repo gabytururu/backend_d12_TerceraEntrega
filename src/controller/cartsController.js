@@ -103,24 +103,7 @@ export class CartsController{
                 message: error.message
             })
         }
-       
-    
-        //note:not sure if needed anymore due to regex validation(test more & decide)
-        // if (typeof newCartDetails !== 'object'){
-        //     return res.status(400).json({
-        //         error: 'Invalid format in request body',
-        //         message: `Failed to replace the content in the cart id#${cid} due to invalid format request. Please make sure the products you submit are in a valid JSON format.`
-        //     });
-        // }
-        
-        //note:not sure if needed due to regex validation(test more & decide)
-        // if (Object.keys(newCartDetails).length === 0) {
-        //     return res.status(400).json({
-        //         error: 'Empty request body',
-        //         message: `Failed to replace the content in the cart id#${cid} due to incomplete request. Please submit the products you want to push to replace the cart content.`
-        //     });
-        // }
-        
+      
         const newCartDetailsString = JSON.stringify(newCartDetails)
         const regexValidFormat = /^\[\{.*\}\]$/;
         if(!regexValidFormat.test(newCartDetailsString)){
@@ -144,7 +127,6 @@ export class CartsController{
         const pidArray = newCartDetails.map(cart=>cart.pid)
         try{
             for(const pid of pidArray){
-                //const pidIsValid = await productManager.getProductById(pid)
                 const pidIsValid = await productsService.getProductBy({_id:pid})
                 if(!pidIsValid){
                     return res.status(404).json({
@@ -162,7 +144,6 @@ export class CartsController{
      
         
         try{
-            //const cartEditDetails = await cartManager.replaceCart(cid,newCartDetails)
             const cartEditDetails = await cartsService.replaceProductsInCart(cid,newCartDetails)
             if(!cartEditDetails){
                 return res.status(404).json({
