@@ -2,12 +2,10 @@ import passport from "passport";
 import local from "passport-local";
 import github from "passport-github2";
 import { config } from "./config.js";
-//import { CartManagerMONGO as CartManager } from "../dao/cartManagerMONGO.js";
 import { cartsService } from "../services/cartsService.js";
 import { UsersManagerMongo as UsersManager } from "../dao/usersManagerMONGO.js";
 import { hashPassword, validatePassword } from "../utils.js";
 
-//const cartManager = new CartManager()
 const usersManager = new UsersManager()
 
 
@@ -53,7 +51,6 @@ export const initPassport=()=>{
                     }
                    
                     password = hashPassword(password)                  
-                    //const newCart = await cartManager.createCart()
                     const newCart = await cartsService.createNewCart()
                     const newUser = await usersManager.createUser({first_name, last_name, age,email:username,password,cart:newCart._id})
                     
@@ -132,7 +129,6 @@ export const initPassport=()=>{
                     const first_name= profile._json.name
                     let authenticatedUser = await usersManager.getUserByFilter({email})
                     if(!authenticatedUser){
-                        //const newCart= await cartManager.createCart()
                         const newCart= await cartsService.createNewCart()
                         authenticatedUser=await usersManager.createUser({
                             first_name, email, cart:newCart._id, profile

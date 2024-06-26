@@ -1,12 +1,6 @@
-// import { ProductManagerMONGO as ProductManager } from "../dao/productManagerMONGO.js";
-// import { CartManagerMONGO as CartManager } from "../dao/cartManagerMONGO.js";
 import { productsService } from "../services/productsService.js";
 import { cartsService } from "../services/cartsService.js";
 import { ticketsService } from "../services/ticketsService.js";
-
-
-// const productManager = new ProductManager();
-// const cartManager = new CartManager();
 
 export class VistasController{
     static renderHome=async(req,res)=>{
@@ -29,10 +23,8 @@ export class VistasController{
         if (query.stock === "disponible") query.stock = { $gt: 0 };
     
     
-        try{
-            //const {docs:products,page,totalPages, hasPrevPage, hasNextPage, prevPage,nextPage} = await productManager.getProducts(query,{pagina,limit,sort})
+        try{            
             const {docs:products,page,totalPages, hasPrevPage, hasNextPage, prevPage,nextPage} = await productsService.getProducts(query,{pagina,limit,sort})
-
 
             res.setHeader('Content-type', 'text/html');
             res.status(200).render('products',{
@@ -64,7 +56,6 @@ export class VistasController{
         userProfile.isPublic= userProfile.rol === 'public';      
        
         try{
-            //const matchingProduct = await productManager.getProductByFilter({_id:pid})
             const matchingProduct = await productsService.getProductBy({_id:pid})
             if(!matchingProduct){
                 res.setHeader('Content-type', 'application/json');
@@ -84,8 +75,7 @@ export class VistasController{
     }
 
     static renderCarts=async(req,res)=>{
-        try{
-            //const carts = await cartManager.getCarts()
+        try{           
             const carts = await cartsService.getCarts()
             if(!carts){
                 return res.status(404).json({
@@ -108,8 +98,7 @@ export class VistasController{
     static renderCartById=async(req,res)=>{
         const {cid} = req.params
        
-        try{
-           // const matchingCart = await cartManager.getCartById(cid)
+        try{           
             const matchingCart = await cartsService.getCartById(cid)
             if(!matchingCart){
                 return res.status(404).json({

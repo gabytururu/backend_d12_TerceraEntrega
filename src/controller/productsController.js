@@ -1,8 +1,5 @@
-// import { ProductManagerMONGO as ProductManager } from "../dao/productManagerMONGO.js";
 import { productsService } from "../services/productsService.js";
 import { isValidObjectId } from 'mongoose';
-
-//const productManager = new ProductManager()
 
 export class ProductsController{
     static getProducts=async(req,res)=>{
@@ -15,9 +12,7 @@ export class ProductsController{
         if (query.category) query.category = query.category;
         if (query.stock === "disponible") query.stock = { $gt: 0 };
        
-        try{ 
-            // const {docs,totalPages,prevPage,nextPage,page,hasPrevPage,hasNextPage}= await productManager.getProducts(query,{pagina, limit, sort});
-
+        try{            
             const {docs,totalPages,prevPage,nextPage,page,hasPrevPage,hasNextPage}= await productsService.getProducts(query,{pagina, limit, sort});
             return res.status(200).json({
                 status: 'success',
@@ -48,8 +43,7 @@ export class ProductsController{
             return res.status(400).json({error:`The ID# provided is not an accepted Id Format in MONGODB database. Please verify your ID# and try again`})
         }
     
-        try{
-            //const matchingProduct = await productManager.getProductByFilter({_id:id})
+        try{          
             const matchingProduct = await productsService.getProductBy({_id:id})
             if(!matchingProduct){
                 return res.status(404).json({
@@ -90,7 +84,6 @@ export class ProductsController{
         }  
         
         try{
-            //const duplicateCode = await productManager.getProductByFilter({code: code})
             const duplicateCode = await productsService.getProductBy({code: code})
             if(duplicateCode){
                 return res.status(400).json({
@@ -105,8 +98,7 @@ export class ProductsController{
             })
         }
     
-        try{
-            //const newProduct = await productManager.addProduct(prodToPost)
+        try{         
             const newProduct = await productsService.postNewProduct(prodToPost)
             return res.status(200).json({
                 payload: newProduct
@@ -128,8 +120,7 @@ export class ProductsController{
             return res.status(400).json({error:`The ID# provided is not an accepted Id Format in MONGODB database. Please verify your ID# and try again`})
         }
     
-        try{
-            //const matchingProduct = await productManager.getProductByFilter({_id:id})
+        try{           
             const matchingProduct = await productsService.getProductBy({_id:id})
             if(!matchingProduct){
                 return res.status(404).json({
@@ -151,8 +142,7 @@ export class ProductsController{
         }
     
         if(propsToUpdate.code){
-            try {
-                //const duplicateCode = await productManager.getProductByFilter({_id:{$ne:id}, code: propsToUpdate.code})
+            try {               
                 const duplicateCode = await productsService.getProductBy({_id:{$ne:id}, code: propsToUpdate.code})
                 if(duplicateCode){
                     return res.status(400).json({
@@ -169,8 +159,7 @@ export class ProductsController{
         }
     
     
-        try {
-            //let updatedProduct = await productManager.updateProduct(id,propsToUpdate)
+        try {           
             let updatedProduct = await productsService.updateProduct(id,propsToUpdate)
             return res.status(200).json({payload:updatedProduct})
         } catch (error) {
@@ -189,8 +178,7 @@ export class ProductsController{
             return res.status(400).json({error:`The ID# provided is not an accepted Id Format in MONGODB database. Please verify your ID# and try again`})
         }
     
-        try {
-            //let deletedProduct = await productManager.deleteProduct(id)
+        try {        
             let deletedProduct = await productsService.deleteProduct(id)
             if(!deletedProduct){
                 return res.status(404).json({

@@ -1,25 +1,20 @@
-// import { CartManagerMONGO as CartManager } from '../dao/cartManagerMONGO.js'
 import { productsService } from '../services/productsService.js';
 import { cartsService } from '../services/cartsService.js';
 import { ticketsService } from '../services/ticketsService.js';
-// import { ProductManagerMONGO as ProductManager } from '../dao/productManagerMONGO.js';
 import { isValidObjectId } from 'mongoose';
 import { ticketDTO } from '../DTO/ticketDTO.js';
 import { uniqueTicketCode } from '../utils.js';
 import { sendEmail } from '../utils.js';
 import { UsersManagerMongo as UsersManager } from '../dao/usersManagerMONGO.js';
 import { config } from '../config/config.js';
-import { TicketsMongoDAO } from '../dao/ticketsMongoDAO.js';
+// import { TicketsMongoDAO } from '../dao/ticketsMongoDAO.js';
 
-// const cartManager = new CartManager()
-// const productManager = new ProductManager()
 const usersManager = new UsersManager()
 
 export class CartsController{
     static getCarts=async(req,res)=>{
         res.setHeader('Content-type', 'application/json');    
         try{
-            //const carts = await cartManager.getCarts() 
             const carts = await cartsService.getCarts() 
             if(!carts){
                 return res.status(404).json({
@@ -45,7 +40,6 @@ export class CartsController{
         }
     
         try {
-            //const matchingCart = await cartManager.getCartById(cid) 
             const matchingCart = await cartsService.getCartById(cid) 
             if(!matchingCart){
                 return res.status(404).json({
@@ -66,7 +60,7 @@ export class CartsController{
     static postNewCart=async(req,res)=>{
         res.setHeader('Content-type', 'application/json')
         try {
-            //const newCart = await cartManager.createCart()
+         
             const newCart = await cartsService.createNewCart()
             if(!newCart){
                 return res.status(404).json({
@@ -95,7 +89,7 @@ export class CartsController{
         }
     
         try{
-            //const cartIsValid = await cartManager.getCartById(cid)
+           
             const cartIsValid = await cartsService.getCartById(cid)
             if(!cartIsValid){
                 return res.status(404).json({
@@ -210,8 +204,7 @@ export class CartsController{
             })
         }
     
-        try{
-            //const productIsValid = await productManager.getProductById(pid)
+        try{         
             const productIsValid = await productsService.getProductBy({_id:pid})
             if(!productIsValid){
                 return res.status(400).json({
@@ -219,7 +212,7 @@ export class CartsController{
                     message: `Failed to update cart with Id#${cid} due to invalid argument: The product id provided (id#${pid}) does not exist in our database. Please verify and try again`
                 })
             }
-            //const cartIsValid = await cartManager.getCartById(cid)
+   
             const cartIsValid = await cartsService.getCartById(cid)
             if(!cartIsValid){
                 return res.status(400).json({
@@ -235,11 +228,9 @@ export class CartsController{
         }
         
         try{
-            //const productAlreadyInCart = await cartManager.findProductInCart(cid,pid) 
             const productAlreadyInCart = await cartsService.findProductInCart(cid,pid) 
             if(productAlreadyInCart){
                 try{
-                   // const updatedCart = await cartManager.updateProductInCartQuantity(cid,pid,qty)
                     const updatedCart = await cartsService.updateProductQtyInCart(cid,pid,qty)
                     if(!updatedCart){
                         return res.status(404).json({
@@ -265,7 +256,6 @@ export class CartsController{
     
         //future improvement - seek for better method (change +1 for +N even on first iteration if desired)
         try{
-           // const updatedCart = await cartManager.updateCart(cid,pid)
             const updatedCart = await cartsService.addProductToCart(cid,pid)
             if(!updatedCart){
                 return res.status(404).json({
@@ -294,7 +284,6 @@ export class CartsController{
         }
     
         try {
-            //const deletedCart = await cartManager.deleteCart(cid)
             const deletedCart = await cartsService.deleteProductsInCart(cid)
             if(!deletedCart){
                 return res.status(404).json({
@@ -326,7 +315,6 @@ export class CartsController{
         }
     
         try{
-            //const isProductIdValid = await productManager.getProductById(pid)
             const isProductIdValid = await productsService.getProductBy({_id:pid})
             if(!isProductIdValid){
                 return res.status(404).json({
@@ -335,16 +323,14 @@ export class CartsController{
                 })
             }
     
-            //const isCartIdValid = await cartManager.getCartById(cid)
             const isCartIdValid = await cartsService.getCartById(cid)
             if(!isCartIdValid){
                 return res.status(404).json({
                     error: `ERROR: Cart id# provided was not found`,
                     message: `Failed to delete intended products in cart id#${cid}. The cart id# provided was not found in our database, Please verify and try again`
                 })
-            }
-    
-            //const isProductInCart = await cartManager.findProductInCart(cid,pid)
+            }    
+           
             const isProductInCart = await cartsService.findProductInCart(cid,pid)
             if(!isProductInCart){
                 return res.status(404).json({
@@ -359,8 +345,7 @@ export class CartsController{
             })
         }
     
-        try {
-            //const deletedProductInCart = await cartManager.deleteProductInCart(cid,pid)
+        try {          
             const deletedProductInCart = await cartsService.deleteProductsInCart(cid,pid)
             if(!deletedProductInCart){
                 return res.status(404).json({
